@@ -1,0 +1,60 @@
+{
+  "title": "Google News Scraper",
+  "description": "Scrape Google News by search keyword, topic, or top headlines. No login or API key required.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "queries": {
+      "title": "Search Keywords",
+      "description": "Keywords/phrases to search Google News (e.g. \"artificial intelligence\", \"Tesla earnings\").",
+      "type": "array",
+      "editor": "stringList",
+      "prefill": ["artificial intelligence"],
+      "default": ["artificial intelligence"]
+    },
+    "topics": {
+      "title": "Topics",
+      "description": "Google News topic sections: WORLD, NATION, BUSINESS, TECHNOLOGY, ENTERTAINMENT, SPORTS, SCIENCE, HEALTH.",
+      "type": "array",
+      "editor": "stringList",
+      "default": []
+    },
+    "topHeadlines": {
+      "title": "Top Headlines",
+      "description": "If enabled, also fetch the main top-headlines feed.",
+      "type": "boolean",
+      "editor": "checkbox",
+      "default": false
+    },
+    "country": {
+      "title": "Country",
+      "description": "Two-letter country code for the news edition (e.g. \"US\", \"GB\", \"IN\").",
+      "type": "string",
+      "editor": "textfield",
+      "default": "US"
+    },
+    "language": {
+      "title": "Language",
+      "description": "Two-letter language code (e.g. \"en\", \"es\", \"hi\").",
+      "type": "string",
+      "editor": "textfield",
+      "default": "en"
+    },
+    "maxArticlesPerFeed": {
+      "title": "Max Articles Per Feed",
+      "description": "Maximum articles to extract per query/topic/feed (Google News returns up to ~100).",
+      "type": "integer",
+      "editor": "number",
+      "default": 100,
+      "minimum": 1,
+      "maximum": 100
+    },
+    "proxyConfiguration": {
+      "title": "Proxy Configuration",
+      "description": "Proxy settings. Google News RSS is generally open; enable proxies for very large runs.",
+      "type": "object",
+      "editor": "proxy",
+      "default": { "useApifyProxy": true }
+    }
+  }
+}

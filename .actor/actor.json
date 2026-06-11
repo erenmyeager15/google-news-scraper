@@ -1,0 +1,57 @@
+{
+  "actorSpecification": 1,
+  "name": "google-news-scraper",
+  "title": "Google News Scraper - Articles by Keyword & Topic",
+  "description": "Scrape Google News articles by search keyword, topic, or top headlines. Extract titles, sources, links, publish dates, and snippets. No login or API key needed.",
+  "version": "1.0",
+  "categories": ["NEWS", "BUSINESS"],
+  "dockerfile": "Dockerfile",
+  "input": "../INPUT_SCHEMA.json",
+  "storages": {
+    "dataset": {
+      "actorSpecification": 1,
+      "views": {
+        "articles": {
+          "title": "Articles",
+          "transformation": {
+            "fields": ["title", "source", "publishedAt", "snippet", "link", "feedType", "feedQuery", "country", "language", "scrapedAt"]
+          },
+          "display": {
+            "component": "table",
+            "properties": {
+              "title": { "label": "Title", "format": "text" },
+              "source": { "label": "Source", "format": "text" },
+              "publishedAt": { "label": "Published", "format": "date" },
+              "snippet": { "label": "Snippet", "format": "text" },
+              "link": { "label": "Link", "format": "link" },
+              "feedType": { "label": "Feed", "format": "text" },
+              "feedQuery": { "label": "Query/Topic", "format": "text" },
+              "country": { "label": "Country", "format": "text" },
+              "language": { "label": "Language", "format": "text" },
+              "scrapedAt": { "label": "Scraped At", "format": "text" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "pricingInfo": {
+    "pricingModel": "PAY_PER_EVENT",
+    "pricingPerEvent": {
+      "actorChargeEvents": {
+        "article-scraped": {
+          "eventTitle": "Article Scraped",
+          "eventDescription": "Charged for each Google News article extracted and saved to the dataset.",
+          "eventPriceUsd": 0.001
+        }
+      }
+    }
+  },
+  "defaultRunOptions": {
+    "build": "latest",
+    "memoryMbytes": 512,
+    "timeoutSecs": 3600
+  },
+  "minMemoryMbytes": 256,
+  "maxMemoryMbytes": 2048
+}
