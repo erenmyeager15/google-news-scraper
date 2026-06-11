@@ -55,6 +55,14 @@ Perfect for **media monitoring, brand tracking, sentiment analysis, and news agg
 }
 ```
 
+## How to Scrape Google News (Step by Step)
+
+1. Click **Try for free** / **Run**.
+2. Add search keywords, topic sections (e.g. `TECHNOLOGY`), or enable top headlines.
+3. Set `country`/`language` to target a specific Google News edition.
+4. Set `maxArticlesPerFeed` (start small to test).
+5. Run, then export results as JSON, CSV, Excel, or HTML, or pull them via the Apify API.
+
 ## Pricing
 
 This Actor uses **pay-per-result** pricing:
