@@ -7,6 +7,8 @@
   "categories": ["NEWS", "BUSINESS"],
   "dockerfile": "Dockerfile",
   "input": "../INPUT_SCHEMA.json",
+  "readme": "../README.md",
+  "output": "./output_schema.json",
   "storages": {
     "dataset": {
       "actorSpecification": 1,

@@ -1,0 +1,14 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Google News Scraper Output",
+  "description": "Structured Google News article records with titles, sources, snippets, publish dates, links, feed metadata, country, language, and scraped timestamps.",
+  "type": "object",
+  "properties": {
+    "results": {
+      "type": "string",
+      "title": "Google News article records",
+      "description": "Clean dataset items containing public Google News articles for keywords, topics, or top headlines.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items"
+    }
+  }
+}
