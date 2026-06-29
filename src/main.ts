@@ -66,20 +66,49 @@ async function fetchFeed(url: string): Promise<string | null> {
 }
 
 let total = 0;
+let spendingLimitReached = false;
+const seenArticles = new Set<string>();
+
 for (const feed of feeds) {
+    if (spendingLimitReached) break;
+
     const xml = await fetchFeed(feed.url);
     if (!xml) {
         log.warning(`No data for ${feed.feedType} "${feed.feedQuery}".`);
         continue;
     }
     const records = parseFeed(xml, { feedType: feed.feedType, feedQuery: feed.feedQuery, country: gl, language: hl }, maxArticlesPerFeed);
-    for (const r of records) {
-        await Actor.pushData(r);
-        await Actor.charge({ eventName: 'article-scraped' }).catch(() => null);
+    let savedFromFeed = 0;
+
+    for (const record of records) {
+        const articleKey = record.guid
+            ?? record.link
+            ?? `${record.title ?? ''}|${record.source ?? ''}|${record.publishedAt ?? ''}`;
+
+        if (seenArticles.has(articleKey)) continue;
+
+        const chargeResult = await Actor.pushData(record, 'article-scraped');
+        const recordWasSaved = chargeResult.chargedCount > 0 || !chargeResult.eventChargeLimitReached;
+        if (recordWasSaved) {
+            seenArticles.add(articleKey);
+            total += 1;
+            savedFromFeed += 1;
+        }
+
+        if (chargeResult.eventChargeLimitReached) {
+            spendingLimitReached = true;
+            const message = `Stopped at the user's spending limit after ${total} article(s).`;
+            await Actor.setStatusMessage(message);
+            log.warning(message);
+            break;
+        }
     }
-    total += records.length;
-    log.info(`${feed.feedType} "${feed.feedQuery}": ${records.length} articles`);
+
+    log.info(`${feed.feedType} "${feed.feedQuery}": parsed ${records.length}, saved ${savedFromFeed} article(s)`);
 }
 
-log.info(`Google News scrape finished. ${total} articles scraped.`);
+if (!spendingLimitReached) {
+    await Actor.setStatusMessage(`Finished with ${total} unique article(s).`);
+    log.info(`Google News scrape finished. ${total} unique article(s) saved.`);
+}
 await Actor.exit();

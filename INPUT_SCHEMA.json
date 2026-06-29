@@ -42,10 +42,10 @@
     },
     "maxArticlesPerFeed": {
       "title": "Max Articles Per Feed",
-      "description": "Maximum articles to extract per query/topic/feed (Google News returns up to ~100).",
+      "description": "Maximum articles to extract per query/topic/feed. Start small for testing; Google News RSS commonly returns up to about 100 items per feed.",
       "type": "integer",
       "editor": "number",
-      "default": 100,
+      "default": 10,
       "minimum": 1,
       "maximum": 100
     },
@@ -54,7 +54,7 @@
       "description": "Proxy settings. Google News RSS is generally open; enable proxies for very large runs.",
       "type": "object",
       "editor": "proxy",
-      "default": { "useApifyProxy": true }
+      "default": { "useApifyProxy": false }
     }
   }
 }

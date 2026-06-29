@@ -1,96 +1,101 @@
 # Google News Scraper - Articles by Keyword & Topic
 
-Scrape **Google News** articles by search keyword, topic section, or top headlines - no login, no API key required. Extract titles, sources, links, publish dates, and snippets across any country and language edition. Export to **JSON, CSV, Excel, or HTML**, or pull via the Apify API.
+Scrape Google News RSS results by keyword, topic section, or top-headlines feed. The Actor returns clean article rows with title, publisher, Google News link, publish time, snippet, feed context, country, language, and scrape timestamp.
 
-Perfect for **media monitoring, brand tracking, sentiment analysis, and news aggregation**.
+It is built for media monitoring, brand and competitor tracking, market research, and lightweight news dashboards. No login, browser, or API key is required.
 
-## Features
+## Quick Start
 
-- ✅ **No login or API key** - uses Google News public RSS feeds
-- ✅ **Three modes** - keyword search, topic sections, top headlines
-- ✅ **Any edition** - set country and language
-- ✅ **Clean output** - title (source stripped), source, link, publish date, snippet
-- ✅ **Fast & lightweight** - pure RSS, no headless browser
+```json
+{
+  "queries": ["artificial intelligence"],
+  "topics": [],
+  "topHeadlines": false,
+  "country": "US",
+  "language": "en",
+  "maxArticlesPerFeed": 5,
+  "proxyConfiguration": {
+    "useApifyProxy": false
+  }
+}
+```
+
+This small run keeps cost low and is a good first check before adding more keywords, topics, or top headlines.
 
 ## Input
 
-| Parameter | Type | Description | Default |
-|-----------|------|-------------|---------|
-| `queries` | `string[]` | Search keywords/phrases | `["artificial intelligence"]` |
-| `topics` | `string[]` | Sections: `WORLD`, `NATION`, `BUSINESS`, `TECHNOLOGY`, `ENTERTAINMENT`, `SPORTS`, `SCIENCE`, `HEALTH` | `[]` |
-| `topHeadlines` | `boolean` | Also fetch the main top-headlines feed | `false` |
-| `country` | `string` | Country code (`US`, `GB`, `IN`, ...) | `US` |
-| `language` | `string` | Language code (`en`, `es`, `hi`, ...) | `en` |
-| `maxArticlesPerFeed` | `integer` | Max articles per feed (up to ~100) | `100` |
-| `proxyConfiguration` | `object` | Proxy settings | Apify Proxy |
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `queries` | string array | `["artificial intelligence"]` | Keyword or phrase searches. |
+| `topics` | string array | `[]` | Google News topics such as `BUSINESS`, `TECHNOLOGY`, `WORLD`, `SCIENCE`, or `HEALTH`. |
+| `topHeadlines` | boolean | `false` | Also fetch the main top-headlines feed. |
+| `country` | string | `US` | Two-letter edition code such as `US`, `GB`, or `IN`. |
+| `language` | string | `en` | Two-letter language code such as `en`, `es`, or `hi`. |
+| `maxArticlesPerFeed` | integer | `10` | Maximum articles per query, topic, or top-headlines feed. |
+| `proxyConfiguration` | object | disabled | Usually not needed for small RSS runs. Enable only for larger or repeated runs. |
 
-### Example input
+## Output
+
+Each dataset row is one unique Google News RSS item:
+
+| Field | Description |
+| --- | --- |
+| `title` | Article headline with trailing publisher text removed when possible. |
+| `source` | Publisher shown by Google News. |
+| `link` | Google News article URL. |
+| `guid` | Google News RSS item identifier. |
+| `publishedAt` | Publication time as ISO date when available. |
+| `snippet` | Short RSS description text. |
+| `feedType` | `search`, `topic`, or `top`. |
+| `feedQuery` | Keyword, topic, or top-headlines label. |
+| `country`, `language` | Edition used for the feed. |
+| `scrapedAt` | Actor scrape timestamp. |
+
+## Verified Sample
+
+An existing successful run for `artificial intelligence` returned this row:
 
 ```json
 {
-  "queries": ["Tesla earnings", "OpenAI"],
-  "topics": ["TECHNOLOGY", "BUSINESS"],
-  "topHeadlines": true,
+  "title": "Brands using AI-generated influencers to promote products on social media",
+  "source": "The Guardian",
+  "publishedAt": "2026-06-21T06:01:00.000Z",
+  "snippet": "Brands using AI-generated influencers to promote products on social media The Guardian",
+  "feedType": "search",
+  "feedQuery": "artificial intelligence",
   "country": "US",
-  "language": "en",
-  "maxArticlesPerFeed": 100
+  "language": "en"
 }
 ```
-
-## Sample output
-
-```json
-{
-  "title": "Apple's new Siri AI knows when to shut up",
-  "source": "The Verge",
-  "link": "https://news.google.com/rss/articles/CBMiek...",
-  "guid": "CBMiek...",
-  "publishedAt": "2026-06-10T22:52:17.000Z",
-  "snippet": "Apple's new Siri AI knows when to shut up ...",
-  "feedType": "topic",
-  "feedQuery": "TECHNOLOGY",
-  "country": "US",
-  "language": "en",
-  "scrapedAt": "2026-06-11T10:00:00.000Z"
-}
-```
-
-## How to Scrape Google News (Step by Step)
-
-1. Click **Try for free** / **Run**.
-2. Add search keywords, topic sections (e.g. `TECHNOLOGY`), or enable top headlines.
-3. Set `country`/`language` to target a specific Google News edition.
-4. Set `maxArticlesPerFeed` (start small to test).
-5. Run, then export results as JSON, CSV, Excel, or HTML, or pull them via the Apify API.
 
 ## Pricing
 
-This Actor uses **pay-per-result** pricing:
+Active pay-per-event pricing:
 
 | Event | Price |
-|-------|-------|
-| Per article scraped | **$0.001** ($1 / 1,000 articles) |
+| --- | ---: |
+| `article-scraped` | `$0.001` per article |
+| `apify-actor-start` | `$0.00005` per GB at run start |
 
-You are only charged for articles actually returned. Apify platform usage is billed separately by Apify.
+Duplicate articles from overlapping feeds are skipped. Each article is saved and charged atomically, and the Actor stops before fetching another feed when the user's spending limit is reached.
 
-## Use cases
+## Common Workflows
 
-- **Media monitoring** - track coverage of your brand, product, or competitors
-- **Sentiment analysis** - feed headlines/snippets into NLP pipelines
-- **News aggregation** - build topic- or keyword-based feeds
-- **Trend tracking** - monitor stories across countries and languages
+1. Track brand or competitor news with one or more `queries`.
+2. Monitor broad market movement with `topics` such as `BUSINESS` or `TECHNOLOGY`.
+3. Schedule a daily run and export the dataset to CSV, Excel, JSON, or the Apify API.
+4. Feed article rows into a dashboard, alerting workflow, or LLM summarization pipeline.
 
-## Tips
+## Notes and Limits
 
-- Combine `queries`, `topics`, and `topHeadlines` in one run for broad coverage.
-- Use `country`/`language` to target specific Google News editions.
-- Article links are Google News redirect URLs; the `source` field gives the publisher.
+- Results come from Google News RSS feeds, so coverage and ranking follow Google News.
+- Article links are Google News redirect URLs; the `source` field identifies the publisher.
+- Very broad runs can return overlapping articles; duplicates are skipped by `guid` or link.
+- Small runs normally do not need a proxy.
 
 ## Responsible Use
 
-This Actor is intended for lawful collection of publicly available information only. Users are responsible for ensuring their use complies with the source website's terms, robots.txt, applicable privacy laws, including India's DPDP Act, and all local regulations.
-
-Do not use this Actor to collect, store, sell, or misuse personal data without a lawful basis. The Actor author is not responsible for misuse by end users.
+Use this Actor for lawful collection of publicly available news metadata. Respect source terms, robots.txt, copyright, privacy laws, and any downstream restrictions for the content you export or process.
 
 ## License
 

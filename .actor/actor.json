@@ -4,11 +4,15 @@
   "title": "Google News Scraper - Articles by Keyword & Topic",
   "description": "Scrape Google News articles by search keyword, topic, or top headlines. Extract titles, sources, links, publish dates, and snippets. No login or API key needed.",
   "version": "1.0",
-  "categories": ["NEWS", "BUSINESS"],
+  "categories": ["NEWS", "BUSINESS", "OTHER"],
   "dockerfile": "Dockerfile",
   "input": "../INPUT_SCHEMA.json",
   "readme": "../README.md",
   "output": "./output_schema.json",
+  "exampleRunInput": {
+    "body": "{\"queries\":[\"artificial intelligence\"],\"topics\":[],\"topHeadlines\":false,\"country\":\"US\",\"language\":\"en\",\"maxArticlesPerFeed\":5,\"proxyConfiguration\":{\"useApifyProxy\":false}}",
+    "contentType": "application/json; charset=utf-8"
+  },
   "storages": {
     "dataset": {
       "actorSpecification": 1,
@@ -41,9 +45,17 @@
     "pricingModel": "PAY_PER_EVENT",
     "pricingPerEvent": {
       "actorChargeEvents": {
+        "apify-actor-start": {
+          "eventTitle": "Actor Start",
+          "eventDescription": "Charged when the Actor starts running. Number of events charged depends on Actor memory (one event per GB, minimum one event).",
+          "isOneTimeEvent": true,
+          "eventPriceUsd": 0.00005
+        },
         "article-scraped": {
           "eventTitle": "Article Scraped",
           "eventDescription": "Charged for each Google News article extracted and saved to the dataset.",
+          "isOneTimeEvent": false,
+          "isPrimaryEvent": true,
           "eventPriceUsd": 0.001
         }
       }
