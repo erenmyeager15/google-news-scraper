@@ -12,7 +12,7 @@ const {
     topHeadlines = false,
     country = 'US',
     language = 'en',
-    maxArticlesPerFeed = 100,
+    maxArticlesPerFeed = 10,
     proxyConfiguration: proxyInput,
 } = input;
 
