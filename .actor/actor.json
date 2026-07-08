@@ -2,7 +2,7 @@
   "actorSpecification": 1,
   "name": "google-news-scraper",
   "title": "Google News Scraper - Articles by Keyword & Topic",
-  "description": "Scrape Google News articles by search keyword, topic, or top headlines. Extract titles, sources, links, publish dates, and snippets. No login or API key needed.",
+  "description": "Search current Google News articles by keyword, topic, or top headlines. Use for AI news monitoring, market briefs, and topic digests; returns title, source, link, publish date, snippet, feed type, country, language, and scrape time. No login or API key needed.",
   "version": "1.0",
   "categories": ["NEWS", "BUSINESS", "OTHER"],
   "dockerfile": "Dockerfile",

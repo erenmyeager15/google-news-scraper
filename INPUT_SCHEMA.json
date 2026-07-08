@@ -1,12 +1,12 @@
 {
   "title": "Google News Scraper",
-  "description": "Scrape Google News by search keyword, topic, or top headlines. No login or API key required.",
+  "description": "Search Google News by keyword, topic, or top headlines for news monitoring, market briefs, and AI-agent research. No login or API key required.",
   "type": "object",
   "schemaVersion": 1,
   "properties": {
     "queries": {
       "title": "Search Keywords",
-      "description": "Keywords/phrases to search Google News (e.g. \"artificial intelligence\", \"Tesla earnings\").",
+      "description": "Keywords or phrases to search in Google News, e.g. \"artificial intelligence\", \"Tesla earnings\", or \"public procurement\". Agents should use focused phrases for cleaner briefs.",
       "type": "array",
       "editor": "stringList",
       "prefill": ["artificial intelligence"],
@@ -14,14 +14,14 @@
     },
     "topics": {
       "title": "Topics",
-      "description": "Google News topic sections: WORLD, NATION, BUSINESS, TECHNOLOGY, ENTERTAINMENT, SPORTS, SCIENCE, HEALTH.",
+      "description": "Google News topic sections for broad monitoring: WORLD, NATION, BUSINESS, TECHNOLOGY, ENTERTAINMENT, SPORTS, SCIENCE, HEALTH.",
       "type": "array",
       "editor": "stringList",
       "default": []
     },
     "topHeadlines": {
       "title": "Top Headlines",
-      "description": "If enabled, also fetch the main top-headlines feed.",
+      "description": "If enabled, also fetch the main top-headlines feed for the selected country/language.",
       "type": "boolean",
       "editor": "checkbox",
       "default": false
@@ -42,7 +42,7 @@
     },
     "maxArticlesPerFeed": {
       "title": "Max Articles Per Feed",
-      "description": "Maximum articles to extract per query/topic/feed. Start small for testing; Google News RSS commonly returns up to about 100 items per feed.",
+      "description": "Maximum articles to extract per query/topic/feed. Use 5-10 for agent summaries and small briefs; Google News RSS commonly returns up to about 100 items per feed.",
       "type": "integer",
       "editor": "number",
       "default": 10,
