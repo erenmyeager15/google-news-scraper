@@ -1,9 +1,9 @@
 {
   "queries": ["artificial intelligence"],
-  "topics": ["TECHNOLOGY"],
-  "topHeadlines": true,
+  "topics": [],
+  "topHeadlines": false,
   "country": "US",
   "language": "en",
-  "maxArticlesPerFeed": 5,
+  "maxArticlesPerFeed": 1,
   "proxyConfiguration": { "useApifyProxy": false }
 }

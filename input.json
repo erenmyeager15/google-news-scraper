@@ -4,7 +4,7 @@
   "topHeadlines": false,
   "country": "US",
   "language": "en",
-  "maxArticlesPerFeed": 5,
+  "maxArticlesPerFeed": 1,
   "proxyConfiguration": {
     "useApifyProxy": false
   }

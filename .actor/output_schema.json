@@ -1,14 +1,20 @@
 {
   "actorOutputSchemaVersion": 1,
   "title": "Google News Scraper Output",
-  "description": "Structured Google News article records with titles, sources, snippets, publish dates, links, feed metadata, country, language, and scraped timestamps.",
+  "description": "Structured Google News RSS records plus machine-readable run diagnostics.",
   "type": "object",
   "properties": {
     "results": {
       "type": "string",
       "title": "Google News article records",
-      "description": "Clean dataset items containing public Google News articles for keywords, topics, or top headlines.",
+      "description": "Validated Google News RSS metadata for keywords, topics, or top headlines.",
       "template": "{{links.apiDefaultDatasetUrl}}/items"
+    },
+    "runStatus": {
+      "type": "string",
+      "title": "Run status and feed diagnostics",
+      "description": "Outcome, feed counts, request attempts, saved records, duplicates, invalid items, and per-feed failures.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/RUN_STATUS"
     }
   }
 }

@@ -1,8 +1,9 @@
 {
   "title": "Google News Scraper",
-  "description": "Search Google News by keyword, topic, or top headlines for news monitoring, market briefs, and AI-agent research. No login or API key required.",
+  "description": "Read Google News RSS metadata by keyword, topic, or top headlines. This is not an official Google API; verify the current feed terms for your use.",
   "type": "object",
   "schemaVersion": 1,
+  "additionalProperties": false,
   "properties": {
     "queries": {
       "title": "Search Keywords",
@@ -10,14 +11,26 @@
       "type": "array",
       "editor": "stringList",
       "prefill": ["artificial intelligence"],
-      "default": ["artificial intelligence"]
+      "default": ["artificial intelligence"],
+      "maxItems": 20,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      }
     },
     "topics": {
       "title": "Topics",
       "description": "Google News topic sections for broad monitoring: WORLD, NATION, BUSINESS, TECHNOLOGY, ENTERTAINMENT, SPORTS, SCIENCE, HEALTH.",
       "type": "array",
       "editor": "stringList",
-      "default": []
+      "default": [],
+      "maxItems": 8,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32
+      }
     },
     "topHeadlines": {
       "title": "Top Headlines",
@@ -31,27 +44,33 @@
       "description": "Two-letter country code for the news edition (e.g. \"US\", \"GB\", \"IN\").",
       "type": "string",
       "editor": "textfield",
-      "default": "US"
+      "default": "US",
+      "minLength": 2,
+      "maxLength": 2,
+      "pattern": "^[A-Za-z]{2}$"
     },
     "language": {
       "title": "Language",
       "description": "Two-letter language code (e.g. \"en\", \"es\", \"hi\").",
       "type": "string",
       "editor": "textfield",
-      "default": "en"
+      "default": "en",
+      "minLength": 2,
+      "maxLength": 2,
+      "pattern": "^[A-Za-z]{2}$"
     },
     "maxArticlesPerFeed": {
       "title": "Max Articles Per Feed",
       "description": "Maximum articles to extract per query/topic/feed. Use 5-10 for agent summaries and small briefs; Google News RSS commonly returns up to about 100 items per feed.",
       "type": "integer",
       "editor": "number",
-      "default": 10,
+      "default": 1,
       "minimum": 1,
       "maximum": 100
     },
     "proxyConfiguration": {
       "title": "Proxy Configuration",
-      "description": "Proxy settings. Google News RSS is generally open; enable proxies for very large runs.",
+      "description": "Usually keep disabled for small RSS requests. Direct and custom proxy URL modes are supported when explicitly configured.",
       "type": "object",
       "editor": "proxy",
       "default": { "useApifyProxy": false }
