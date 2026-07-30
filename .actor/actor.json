@@ -57,14 +57,14 @@
           "eventDescription": "Charged for each Google News article extracted and saved to the dataset.",
           "isOneTimeEvent": false,
           "isPrimaryEvent": true,
-          "eventPriceUsd": 0.001
+          "eventPriceUsd": 0.0008
         }
       }
     }
   },
   "defaultRunOptions": {
     "build": "latest",
-    "memoryMbytes": 512,
+    "memoryMbytes": 256,
     "timeoutSecs": 3600
   },
   "minMemoryMbytes": 256,

@@ -85,12 +85,15 @@ A valid feed with no items finishes as `empty`. If every selected feed is blocke
 
 ## Pricing
 
-Active pay-per-event pricing remains:
+Active pay-per-event pricing:
 
 | Event | Price |
 | --- | ---: |
-| `article-scraped` | `$0.001` per validated article |
+| `article-scraped` | `$0.0008` per validated article |
 | `apify-actor-start` | `$0.00005` per GB at run start |
+
+That is **$0.80 per 1,000 validated articles**, plus platform usage. The
+lightweight RSS workflow defaults to 256 MB memory and normally needs no proxy.
 
 Records are validated and deduplicated before the atomic dataset write and charge. The Actor stops before requesting another feed after the user's spending limit is reached.
 
