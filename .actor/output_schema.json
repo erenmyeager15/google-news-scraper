@@ -1,7 +1,7 @@
 {
   "actorOutputSchemaVersion": 1,
-  "title": "Google News Monitor Output",
-  "description": "Structured monitored Google News RSS records, source/story intelligence, reports, and machine-readable diagnostics.",
+  "title": "Google News Scraper & Monitor Results",
+  "description": "Validated Google News records with brand-monitoring states, freshness, publisher and story intelligence, reports, and machine-readable diagnostics.",
   "type": "object",
   "properties": {
     "results": {

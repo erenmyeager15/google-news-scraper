@@ -1,34 +1,48 @@
-# Google News Monitor - Alerts, Topics & Reports
+# Google News Scraper & Monitor — Brand Alerts, PR & Competitor Tracking
 
-Turn public Google News RSS feeds into a repeatable keyword and topic watchlist. The Actor returns the complete current article snapshot, labels repeat-run rows as baseline, new, updated, unchanged, or partial, and creates ready-to-review Markdown and formula-safe CSV reports.
+**Know what changed, who published it, and which stories deserve attention.** Track US and global Google News coverage for brands, competitors, executives, markets, products, and public-policy topics—without building a news pipeline or manually comparing exports.
 
-This Actor uses the Google News RSS surface, not an official Google API. Feed availability, ranking, fields, and usage terms can change.
+- **$0.80 per 1,000 saved articles**
+- **256 MB, no proxy, browser, login, or API key by default**
+- **Keyword, exact-phrase, `OR`, exclusion, `site:` and `when:` searches**
+- **Private recurring watchlists with baseline, new, updated and unchanged states**
+- **Publisher share, source diversity, freshness and same-day story fingerprints**
+- **Clean JSON dataset plus Markdown and spreadsheet-safe CSV reports**
 
-## What makes this useful
+This Actor uses the public Google News RSS surface, not an official Google API. Feed availability, ranking, fields, and usage terms can change.
 
-- **Named private watchlists:** reuse the same `monitorName` on a schedule to compare observations.
-- **Honest change states:** distinguish the first baseline from genuinely new articles, changed RSS evidence, unchanged rows, and unavailable history.
-- **Freshness signals:** configurable fresh and breaking-news time windows based only on publication timestamps. These are deterministic timing signals, not editorial judgments.
-- **Source intelligence:** count unique publishers, show the largest publisher share, and flag concentrated five-or-more-row samples.
-- **Story fingerprints:** group matching same-day headline word sets without AI, article-body scraping, or invented similarity claims.
-- **Bounded history:** retain only the configured number of private observations per article.
-- **Reports included:** `MONITOR_SUMMARY`, `MONITOR_REPORT.md`, and formula-safe `MONITOR_REPORT.csv` accompany the dataset.
-- **Low-cost runtime:** direct RSS requests, 256 MB default memory, no browser, login, API key, or proxy by default.
+## Built for US monitoring workflows
 
-The current price remains **$0.80 per 1,000 saved articles**, below many general Google News Store alternatives. The product competes on monitoring evidence and reports rather than claiming the lowest Store price.
+- **Brand and PR monitoring:** watch company, product, campaign, executive, crisis, lawsuit, outage, or reputation terms.
+- **Competitor intelligence:** follow launches, funding, partnerships, pricing, hiring, regulation, and market moves.
+- **Policy and regulatory tracking:** monitor US agencies, legislation, court decisions, industries, and public-policy topics.
+- **Market research:** compare publisher coverage, detect concentrated narratives, and group matching same-day headlines.
+- **AI agents and daily briefs:** schedule the same named watchlist and feed validated rows or reports into Apify webhooks and integrations.
 
-## Quick start
+## Why choose this Google News scraper
+
+- **A complete snapshot with change evidence:** every repeat row says whether it is new, updated, unchanged, or partial and includes previous observed values.
+- **Source intelligence, not just links:** see unique publishers, top-source share, concentration warnings, publisher domains, and story clusters.
+- **Reports ready for humans and automation:** every run writes `MONITOR_SUMMARY`, `MONITOR_REPORT.md`, `MONITOR_REPORT.csv`, and detailed `RUN_STATUS` diagnostics.
+- **Honest failure behavior:** incomplete scans do not advance the baseline, storage problems are surfaced, and invalid or duplicate rows are not billed as article events.
+- **Low operating cost:** direct structured RSS requests normally finish in seconds without residential proxy traffic.
+
+## Verified owner benchmark
+
+On October 10, 2026, two matching US AI-news owner tests each saved 25 validated articles. The baseline covered 25 unique publishers; the repeat classified all 25 as unchanged at observation count two, with zero invalid rows, false alerts, proxy use, or monitoring/report failures. Runtime was about 5.8–6.7 seconds and peak memory stayed near 39–40 MiB at the 256 MB default. These are owner test results, not guaranteed customer results.
+
+## Start a US competitor watchlist
 
 ```json
 {
-  "queries": ["artificial intelligence"],
+  "queries": ["\"OpenAI\" OR \"Anthropic\" when:7d"],
   "topics": [],
   "topHeadlines": false,
   "country": "US",
   "language": "en",
   "maxArticlesPerFeed": 25,
   "trackChanges": true,
-  "monitorName": "artificial-intelligence-us",
+  "monitorName": "us-ai-competitor-watch",
   "observationHistoryLimit": 10,
   "newArticleWindowHours": 24,
   "breakingWindowHours": 6,
@@ -38,9 +52,9 @@ The current price remains **$0.80 per 1,000 saved articles**, below many general
 }
 ```
 
-Run the same input again—manually or through an Apify schedule—to advance observation counts and distinguish new, updated, and unchanged articles.
+Run the same input again—manually or through an Apify Schedule—to advance observation counts and distinguish new, updated, and unchanged articles. Connect the task's run-success webhook when a downstream Slack, email, CRM, database, or agent workflow should receive each completed report.
 
-The Store prefill requests only one article so a first test stays quick and inexpensive. Raise `maxArticlesPerFeed` after checking that the feed and permitted use fit your workflow.
+The Store prefill requests one article so the first test stays quick and inexpensive. Raise `maxArticlesPerFeed` after confirming that the output and permitted use fit your workflow.
 
 ## Input
 

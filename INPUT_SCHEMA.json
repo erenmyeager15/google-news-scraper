@@ -1,6 +1,6 @@
 {
-  "title": "Google News Monitor",
-  "description": "Track Google News RSS metadata by keyword, topic, or top headlines. Detect new and changed articles, measure source diversity, and export monitoring reports. This is not an official Google API; verify the current feed terms for your use.",
+  "title": "Google News Scraper & Monitor",
+  "description": "Track US and global news for brands, competitors, markets, and policy. Search Google News by keyword or topic, detect changes, measure source coverage, and export ready-to-use monitoring reports.",
   "type": "object",
   "schemaVersion": 1,
   "additionalProperties": false,
