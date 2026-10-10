@@ -19,6 +19,11 @@ const INPUT_FIELDS = new Set([
     'country',
     'language',
     'maxArticlesPerFeed',
+    'trackChanges',
+    'monitorName',
+    'observationHistoryLimit',
+    'newArticleWindowHours',
+    'breakingWindowHours',
     'proxyConfiguration',
 ]);
 const PROXY_FIELDS = new Set([
@@ -52,6 +57,22 @@ export function normalizeInput(value: unknown): NormalizedInput {
     const maxArticlesPerFeed = input.maxArticlesPerFeed === undefined
         ? 1
         : requireInteger(input.maxArticlesPerFeed, 'maxArticlesPerFeed', 1, 100);
+    const trackChanges = input.trackChanges === undefined
+        ? true
+        : requireBoolean(input.trackChanges, 'trackChanges');
+    const monitorName = normalizeMonitorName(input.monitorName);
+    const observationHistoryLimit = input.observationHistoryLimit === undefined
+        ? 10
+        : requireInteger(input.observationHistoryLimit, 'observationHistoryLimit', 1, 50);
+    const newArticleWindowHours = input.newArticleWindowHours === undefined
+        ? 24
+        : requireInteger(input.newArticleWindowHours, 'newArticleWindowHours', 1, 720);
+    const breakingWindowHours = input.breakingWindowHours === undefined
+        ? 6
+        : requireInteger(input.breakingWindowHours, 'breakingWindowHours', 1, 72);
+    if (breakingWindowHours > newArticleWindowHours) {
+        throw new Error('breakingWindowHours cannot exceed newArticleWindowHours.');
+    }
     const proxyConfiguration = normalizeProxyInput(input.proxyConfiguration);
 
     return {
@@ -61,8 +82,23 @@ export function normalizeInput(value: unknown): NormalizedInput {
         country,
         language,
         maxArticlesPerFeed,
+        trackChanges,
+        monitorName,
+        observationHistoryLimit,
+        newArticleWindowHours,
+        breakingWindowHours,
         ...(proxyConfiguration ? { proxyConfiguration } : {}),
     };
+}
+
+function normalizeMonitorName(value: unknown): string {
+    if (value === undefined) return 'artificial-intelligence-us';
+    if (typeof value !== 'string') throw new Error('monitorName must be a string.');
+    const normalized = value.replace(/\s+/g, ' ').trim();
+    if (normalized.length < 2 || normalized.length > 80) {
+        throw new Error('monitorName must contain 2 to 80 characters.');
+    }
+    return normalized;
 }
 
 export function buildFeeds(input: NormalizedInput): FeedDescriptor[] {

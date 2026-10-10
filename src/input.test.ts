@@ -22,6 +22,27 @@ test('normalizeInput uses a one-result runtime default', () => {
     assert.equal(input.maxArticlesPerFeed, 1);
     assert.equal(input.country, 'US');
     assert.equal(input.language, 'en');
+    assert.equal(input.trackChanges, true);
+    assert.equal(input.monitorName, 'artificial-intelligence-us');
+    assert.equal(input.observationHistoryLimit, 10);
+    assert.equal(input.newArticleWindowHours, 24);
+    assert.equal(input.breakingWindowHours, 6);
+});
+
+test('normalizeInput validates bounded monitoring controls', () => {
+    const input = normalizeInput({
+        queries: ['apify'], monitorName: ' Product launch watch ', observationHistoryLimit: 5,
+        newArticleWindowHours: 48, breakingWindowHours: 12, trackChanges: false,
+    });
+    assert.equal(input.monitorName, 'Product launch watch');
+    assert.equal(input.trackChanges, false);
+    assert.equal(input.observationHistoryLimit, 5);
+    assert.throws(() => normalizeInput({ queries: ['apify'], monitorName: 'x' }), /2 to 80/);
+    assert.throws(() => normalizeInput({ queries: ['apify'], observationHistoryLimit: 51 }), /1 to 50/);
+    assert.throws(
+        () => normalizeInput({ queries: ['apify'], newArticleWindowHours: 6, breakingWindowHours: 12 }),
+        /cannot exceed/,
+    );
 });
 
 test('normalizeInput requires at least one feed target', () => {

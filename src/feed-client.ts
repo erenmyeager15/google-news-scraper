@@ -149,12 +149,16 @@ function retryDelay(headers: Headers, attempt: number): number {
 }
 
 function safeErrorMessage(error: unknown): string {
-    const message = error instanceof Error ? error.message : String(error);
+    const cause = error instanceof Error && error.cause instanceof Error
+        ? ` (${error.cause.name}: ${error.cause.message})`
+        : '';
+    const message = `${error instanceof Error ? error.message : String(error)}${cause}`;
     return message
         .replace(/\s+/g, ' ')
         .trim()
         .slice(0, 300)
-        .replace(/(https?:\/\/)[^/@\s]+(?::[^/@\s]*)?@/gi, '$1[redacted]@');
+        .replace(/(https?:\/\/)[^/@\s]+(?::[^/@\s]*)?@/gi, '$1[redacted]@')
+        .replace(/([?&](?:key|access_token)=)[^&\s)]+/gi, '$1[redacted]');
 }
 
 function boundedInteger(value: number, minimum: number, maximum: number, field: string): number {

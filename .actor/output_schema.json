@@ -1,7 +1,7 @@
 {
   "actorOutputSchemaVersion": 1,
-  "title": "Google News Scraper Output",
-  "description": "Structured Google News RSS records plus machine-readable run diagnostics.",
+  "title": "Google News Monitor Output",
+  "description": "Structured monitored Google News RSS records, source/story intelligence, reports, and machine-readable diagnostics.",
   "type": "object",
   "properties": {
     "results": {
@@ -15,6 +15,24 @@
       "title": "Run status and feed diagnostics",
       "description": "Outcome, feed counts, request attempts, saved records, duplicates, invalid items, and per-feed failures.",
       "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/RUN_STATUS"
+    },
+    "monitorSummary": {
+      "type": "string",
+      "title": "Monitoring and source-diversity summary",
+      "description": "Counts for baseline/new/updated/unchanged articles, freshness, sources, story clusters, concentration, and monitoring signals.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/MONITOR_SUMMARY"
+    },
+    "markdownReport": {
+      "type": "string",
+      "title": "Readable monitoring report",
+      "description": "Markdown summary of article alerts, changes, freshness, source diversity, and top publishers.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/MONITOR_REPORT.md"
+    },
+    "csvReport": {
+      "type": "string",
+      "title": "CSV monitoring report",
+      "description": "Formula-safe CSV export for spreadsheet and scheduled reporting workflows.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/MONITOR_REPORT.csv"
     }
   }
 }

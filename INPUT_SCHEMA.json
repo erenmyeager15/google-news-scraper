@@ -1,6 +1,6 @@
 {
-  "title": "Google News Scraper",
-  "description": "Read Google News RSS metadata by keyword, topic, or top headlines. This is not an official Google API; verify the current feed terms for your use.",
+  "title": "Google News Monitor",
+  "description": "Track Google News RSS metadata by keyword, topic, or top headlines. Detect new and changed articles, measure source diversity, and export monitoring reports. This is not an official Google API; verify the current feed terms for your use.",
   "type": "object",
   "schemaVersion": 1,
   "additionalProperties": false,
@@ -67,6 +67,49 @@
       "default": 1,
       "minimum": 1,
       "maximum": 100
+    },
+    "trackChanges": {
+      "title": "Track Changes",
+      "description": "Keep a private named watchlist and label repeat-run rows as baseline, new, updated, unchanged, or partial.",
+      "type": "boolean",
+      "editor": "checkbox",
+      "default": true
+    },
+    "monitorName": {
+      "title": "Watchlist Name",
+      "description": "Stable private name used to reuse this watchlist's history across scheduled runs. Use a different name for unrelated searches.",
+      "type": "string",
+      "editor": "textfield",
+      "default": "artificial-intelligence-us",
+      "minLength": 2,
+      "maxLength": 80
+    },
+    "observationHistoryLimit": {
+      "title": "History Per Article",
+      "description": "Maximum private observations retained for each article in this watchlist.",
+      "type": "integer",
+      "editor": "number",
+      "default": 10,
+      "minimum": 1,
+      "maximum": 50
+    },
+    "newArticleWindowHours": {
+      "title": "Fresh Article Window (hours)",
+      "description": "Articles published within this many hours are labelled fresh. This is a deterministic timing signal, not an editorial judgment.",
+      "type": "integer",
+      "editor": "number",
+      "default": 24,
+      "minimum": 1,
+      "maximum": 720
+    },
+    "breakingWindowHours": {
+      "title": "Breaking Window (hours)",
+      "description": "A newly observed article inside this shorter window receives a high-severity breaking-window signal. Must not exceed the fresh article window.",
+      "type": "integer",
+      "editor": "number",
+      "default": 6,
+      "minimum": 1,
+      "maximum": 72
     },
     "proxyConfiguration": {
       "title": "Proxy Configuration",

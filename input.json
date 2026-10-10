@@ -5,6 +5,11 @@
   "country": "US",
   "language": "en",
   "maxArticlesPerFeed": 1,
+  "trackChanges": true,
+  "monitorName": "artificial-intelligence-us",
+  "observationHistoryLimit": 10,
+  "newArticleWindowHours": 24,
+  "breakingWindowHours": 6,
   "proxyConfiguration": {
     "useApifyProxy": false
   }

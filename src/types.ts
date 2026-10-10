@@ -14,6 +14,11 @@ export interface ActorInput {
     country?: string;
     language?: string;
     maxArticlesPerFeed?: number;
+    trackChanges?: boolean;
+    monitorName?: string;
+    observationHistoryLimit?: number;
+    newArticleWindowHours?: number;
+    breakingWindowHours?: number;
     proxyConfiguration?: ProxyInput;
 }
 
@@ -24,6 +29,11 @@ export interface NormalizedInput {
     country: string;
     language: string;
     maxArticlesPerFeed: number;
+    trackChanges: boolean;
+    monitorName: string;
+    observationHistoryLimit: number;
+    newArticleWindowHours: number;
+    breakingWindowHours: number;
     proxyConfiguration?: ProxyInput;
 }
 
@@ -46,6 +56,70 @@ export interface ArticleRecord {
     country: string;
     language: string;
     scrapedAt: string;
+}
+
+export type MonitoringStatus = 'disabled' | 'baseline' | 'new' | 'updated' | 'unchanged' | 'partial';
+export type ChangeSeverity = 'info' | 'low' | 'medium' | 'high';
+export type FreshnessBucket = 'breaking' | 'fresh' | 'recent' | 'archive' | 'unknown';
+
+export interface MonitoredArticleRecord extends ArticleRecord {
+    monitorName: string | null;
+    monitoringStatus: MonitoringStatus;
+    changeSeverity: ChangeSeverity;
+    changeSummary: string;
+    changedFields: string[];
+    changeSignals: string[];
+    previousSeenAt: string | null;
+    observationCount: number;
+    ageHours: number | null;
+    freshnessBucket: FreshnessBucket;
+    publisherDomain: string | null;
+    storyClusterId: string;
+    previousTitle: string | null;
+    previousSource: string | null;
+    previousPublishedAt: string | null;
+}
+
+export interface ArticleObservation {
+    observedAt: string;
+    title: string;
+    source: string;
+    sourceUrl: string | null;
+    publishedAt: string | null;
+    snippet: string | null;
+}
+
+export interface MonitorRunMeta {
+    completedRuns: number;
+    lastCompletedAt: string | null;
+    lastRecordsSaved: number;
+}
+
+export interface SourceCount {
+    source: string;
+    articles: number;
+    sharePercent: number;
+}
+
+export interface NewsMonitorSummary {
+    monitorName: string | null;
+    trackChanges: boolean;
+    total: number;
+    baseline: number;
+    new: number;
+    updated: number;
+    unchanged: number;
+    partial: number;
+    breaking: number;
+    fresh: number;
+    uniqueSources: number;
+    uniqueStoryClusters: number;
+    multiArticleClusters: number;
+    maxSourceSharePercent: number;
+    sourceConcentrationWarning: boolean;
+    topSources: SourceCount[];
+    signals: Record<string, number>;
+    generatedAt: string;
 }
 
 export interface FeedParseResult {
@@ -91,6 +165,10 @@ export interface GoogleNewsRunStatus {
     recordsSaved: number;
     duplicatesSkipped: number;
     invalidItemsSkipped: number;
+    monitoringEnabled?: boolean;
+    monitoringStateReadFailures?: number;
+    monitoringStateWriteFailures?: number;
+    monitoringReportFailures?: number;
     durationMs: number;
     diagnostics: FeedDiagnostic[];
     failureMessage?: string;

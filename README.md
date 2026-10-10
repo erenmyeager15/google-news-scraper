@@ -1,10 +1,23 @@
-# Google News Scraper - Articles by Keyword & Topic
+# Google News Monitor - Alerts, Topics & Reports
 
-Read structured metadata from Google News RSS search, topic, and top-headline feeds. The Actor returns validated article titles, publishers, publisher URLs, Google News links, publication times, feed context, locale, and scrape timestamps.
+Turn public Google News RSS feeds into a repeatable keyword and topic watchlist. The Actor returns the complete current article snapshot, labels repeat-run rows as baseline, new, updated, unchanged, or partial, and creates ready-to-review Markdown and formula-safe CSV reports.
 
 This Actor uses the Google News RSS surface, not an official Google API. Feed availability, ranking, fields, and usage terms can change.
 
-## Quick Start
+## What makes this useful
+
+- **Named private watchlists:** reuse the same `monitorName` on a schedule to compare observations.
+- **Honest change states:** distinguish the first baseline from genuinely new articles, changed RSS evidence, unchanged rows, and unavailable history.
+- **Freshness signals:** configurable fresh and breaking-news time windows based only on publication timestamps. These are deterministic timing signals, not editorial judgments.
+- **Source intelligence:** count unique publishers, show the largest publisher share, and flag concentrated five-or-more-row samples.
+- **Story fingerprints:** group matching same-day headline word sets without AI, article-body scraping, or invented similarity claims.
+- **Bounded history:** retain only the configured number of private observations per article.
+- **Reports included:** `MONITOR_SUMMARY`, `MONITOR_REPORT.md`, and formula-safe `MONITOR_REPORT.csv` accompany the dataset.
+- **Low-cost runtime:** direct RSS requests, 256 MB default memory, no browser, login, API key, or proxy by default.
+
+The current price remains **$0.80 per 1,000 saved articles**, below many general Google News Store alternatives. The product competes on monitoring evidence and reports rather than claiming the lowest Store price.
+
+## Quick start
 
 ```json
 {
@@ -13,106 +26,102 @@ This Actor uses the Google News RSS surface, not an official Google API. Feed av
   "topHeadlines": false,
   "country": "US",
   "language": "en",
-  "maxArticlesPerFeed": 1,
+  "maxArticlesPerFeed": 25,
+  "trackChanges": true,
+  "monitorName": "artificial-intelligence-us",
+  "observationHistoryLimit": 10,
+  "newArticleWindowHours": 24,
+  "breakingWindowHours": 6,
   "proxyConfiguration": {
     "useApifyProxy": false
   }
 }
 ```
 
-The one-result default keeps the first test quick and inexpensive. Add feeds or raise the per-feed limit only after confirming the output fits your permitted use.
+Run the same input again—manually or through an Apify schedule—to advance observation counts and distinguish new, updated, and unchanged articles.
+
+The Store prefill requests only one article so a first test stays quick and inexpensive. Raise `maxArticlesPerFeed` after checking that the feed and permitted use fit your workflow.
 
 ## Input
 
 | Field | Type | Default | Notes |
 | --- | --- | --- | --- |
-| `queries` | string array | `["artificial intelligence"]` | Up to 20 keyword or phrase searches, 256 characters each. Duplicate values are removed. |
-| `topics` | string array | `[]` | Up to eight unique values: `WORLD`, `NATION`, `BUSINESS`, `TECHNOLOGY`, `ENTERTAINMENT`, `SPORTS`, `SCIENCE`, or `HEALTH`. |
-| `topHeadlines` | boolean | `false` | Also request the main edition feed. |
+| `queries` | string array | `["artificial intelligence"]` | Up to 20 keyword or phrase searches. Google News search operators can be included in the query text. |
+| `topics` | string array | `[]` | Up to eight values: `WORLD`, `NATION`, `BUSINESS`, `TECHNOLOGY`, `ENTERTAINMENT`, `SPORTS`, `SCIENCE`, or `HEALTH`. |
+| `topHeadlines` | boolean | `false` | Also request the selected edition's main feed. |
 | `country` | string | `US` | Two-letter edition code such as `US`, `GB`, or `IN`. |
 | `language` | string | `en` | Two-letter language code such as `en`, `es`, or `hi`. |
-| `maxArticlesPerFeed` | integer | `1` | From 1 to 100 validated records per feed. |
-| `proxyConfiguration` | object | disabled | Direct requests are normally enough. Apify Proxy or custom HTTP(S) proxy URLs are accepted when explicitly configured. |
+| `maxArticlesPerFeed` | integer | `1` | From 1 to 100 validated records per selected feed. |
+| `trackChanges` | boolean | `true` | Enable the named private watchlist and monitoring fields. |
+| `monitorName` | string | `artificial-intelligence-us` | Stable 2-80 character watchlist name. Use different names for unrelated searches. |
+| `observationHistoryLimit` | integer | `10` | Keep 1-50 private observations per article. |
+| `newArticleWindowHours` | integer | `24` | Label articles inside this publication-age window as fresh. |
+| `breakingWindowHours` | integer | `6` | High-severity timing signal for newly observed articles; cannot exceed the fresh window. |
+| `proxyConfiguration` | object | disabled | Direct RSS requests normally work. Explicit Apify/custom HTTP(S) proxy settings remain supported. |
 
 At least one query or topic is required unless `topHeadlines` is enabled. Malformed, unsupported, or unbounded inputs fail before any feed request.
 
 ## Output
 
-Each dataset row is one validated Google News RSS item:
+Each dataset row contains validated RSS evidence plus monitoring intelligence:
 
-| Field | Description |
+| Group | Fields |
 | --- | --- |
-| `title` | Headline with the trailing ` - Publisher` suffix removed when present. |
-| `source` | Publisher name supplied by the feed. |
-| `sourceUrl` | Publisher homepage URL supplied by the RSS `<source>` element, when valid. |
-| `link` | Google News article redirect URL. |
-| `guid` | Google News RSS item identifier. |
-| `publishedAt` | Valid ISO publication timestamp, otherwise `null`. |
-| `snippet` | Distinct RSS description text when available. Google commonly repeats only the headline and publisher; that duplicate is returned as `null`. |
-| `feedType` | `search`, `topic`, or `top`. |
-| `feedQuery` | Keyword, topic, or top-headlines label. |
-| `country`, `language` | Edition used for the feed. |
-| `scrapedAt` | ISO timestamp for collection. |
+| Article | `title`, `source`, `sourceUrl`, `publisherDomain`, `link`, `guid`, `publishedAt`, `snippet` |
+| Feed context | `feedType`, `feedQuery`, `country`, `language`, `scrapedAt` |
+| Monitoring | `monitorName`, `monitoringStatus`, `changeSeverity`, `changeSummary`, `changedFields`, `changeSignals`, `previousSeenAt`, `observationCount` |
+| Freshness | `ageHours`, `freshnessBucket` |
+| Grouping | `storyClusterId` |
+| Previous evidence | `previousTitle`, `previousSource`, `previousPublishedAt` |
 
-## Verified Current Record
+Google News commonly repeats the headline and publisher in the RSS description. In that case `snippet` is returned as `null` rather than pretending it is an article summary.
 
-A direct one-feed verification on 2026-07-15 parsed 100 current RSS items with zero invalid rows. With a one-record limit, the first row was:
+## Monitoring behavior
 
-```json
-{
-  "title": "How do young people feel about AI? 7 teens weigh in",
-  "source": "NPR",
-  "sourceUrl": "https://www.npr.org/",
-  "publishedAt": "2026-07-14T20:00:00.000Z",
-  "snippet": null,
-  "feedType": "search",
-  "feedQuery": "artificial intelligence",
-  "country": "US",
-  "language": "en"
-}
-```
+- The first complete run for a watchlist produces `baseline` rows.
+- A later unseen article is `new`.
+- Changed RSS evidence is `updated` with exact `changedFields` and signals.
+- A known article with identical evidence is `unchanged`.
+- An article is `partial` when prior state cannot be read; the current paid row is still preserved.
+- A failed or spending-limited scan does not advance the watchlist's completed-run marker, preventing incomplete scans from creating false “new” claims next time.
+- Monitoring state is queued only after the current dataset row is saved.
 
-## Run Diagnostics
+History and reports live in Actor storage. Do not share storage links if your watchlist names or research topics are confidential.
 
-Every run writes `RUN_STATUS` to the default key-value store. It reports:
+## Reports and diagnostics
 
-- final outcome: `succeeded`, `partial`, `empty`, `stopped_spending_limit`, or `failed`
-- feeds requested, completed, empty, failed, and skipped
-- request attempts, parsed and saved records, duplicates, and invalid items
-- a bounded per-feed diagnostic without proxy credentials
+Every run writes:
 
-A valid feed with no items finishes as `empty`. If every selected feed is blocked, malformed, or unavailable, the Actor fails visibly instead of returning a misleading zero-result success. Mixed outcomes finish as `partial` with the successful rows preserved.
+- `RUN_STATUS` — source requests, feed outcomes, saved rows, duplicates, invalid items, and monitoring storage failures.
+- `MONITOR_SUMMARY` — state counts, freshness, unique sources, publisher concentration, story fingerprints, and signal counts.
+- `MONITOR_REPORT.md` — a readable overview with top sources and alert links.
+- `MONITOR_REPORT.csv` — spreadsheet-ready output with formula-injection protection.
+
+A valid empty feed finishes as `empty`. If every selected feed is blocked, malformed, or unavailable, the run fails visibly instead of returning a misleading zero-result success. Mixed source outcomes finish as `partial` while preserving successful rows.
 
 ## Pricing
 
-Active pay-per-event pricing:
-
 | Event | Price |
 | --- | ---: |
-| `article-scraped` | `$0.0008` per validated article |
+| `article-scraped` | `$0.0008` per validated, saved article |
 | `apify-actor-start` | `$0.00005` per GB at run start |
 
-That is **$0.80 per 1,000 validated articles**, plus platform usage. The
-lightweight RSS workflow defaults to 256 MB memory and normally needs no proxy.
+That is **$0.80 per 1,000 saved articles**, plus platform usage. Records are validated and deduplicated before the atomic dataset write and charge. Failed, invalid, duplicate, or unsaved rows are not article events.
 
-Records are validated and deduplicated before the atomic dataset write and charge. The Actor stops before requesting another feed after the user's spending limit is reached.
+## Reliability and scope
 
-## Reliability Notes
+- Structured XML parsing—no regex-based feed parsing.
+- Bounded request deadlines, retries, response size, feed count, result count, and history.
+- Only valid HTTPS Google News article links are emitted.
+- Proxy credentials and access tokens are redacted from errors.
+- No login, browser automation, article-body extraction, paywall bypass, author inference, sentiment claim, or personal-profile collection.
+- Story IDs are deterministic headline fingerprints, not semantic or factual-equivalence judgments.
 
-- RSS is parsed with a structured XML parser rather than regular expressions.
-- Requests use a 20-second deadline, bounded retries, compressed responses, and proxy-agent cleanup.
-- HTTP 403, 408, 429, and temporary server failures are retried with bounded delay.
-- Only valid `news.google.com` article links are emitted.
-- Google News redirect URLs are not resolved to publisher article bodies.
-- No login, browser automation, article-body extraction, or paywall bypass is performed.
+## Usage terms
 
-## Usage Terms
+At the time of the earlier reliability audit, the Google News RSS response included a notice limiting the feed to personal feed-reader use and prohibiting other uses. Verify current Google terms and obtain any required permission before running or redistributing results. For commercial monitoring, use a licensed news-data provider or publisher feeds whose terms explicitly permit that workflow.
 
-At the time of the 2026-07-15 audit, the Google News RSS response included a notice limiting the feed to personal feed-reader use and prohibiting other uses. Verify the current Google terms and obtain any required permission before running or redistributing results. For commercial monitoring, use a licensed news-data provider or publisher feeds whose terms explicitly permit that workflow.
-
-## Responsible Use
-
-Use only metadata you are permitted to access and process. Respect Google and publisher terms, copyright, robots.txt, privacy law, and downstream redistribution restrictions. This Actor is not affiliated with or endorsed by Google.
+Respect Google and publisher terms, copyright, robots.txt, privacy law, and downstream redistribution restrictions. This Actor is not affiliated with or endorsed by Google.
 
 ## License
 

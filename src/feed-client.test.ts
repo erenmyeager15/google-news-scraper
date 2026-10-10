@@ -109,6 +109,21 @@ test('feed client classifies final timeout failures', async () => {
     ));
 });
 
+test('feed client preserves a bounded network cause for diagnostics', async () => {
+    const networkError = new Error('fetch failed', { cause: new Error('getaddrinfo ENOTFOUND news.google.com') });
+    const client = createFeedClient({
+        country: 'US',
+        language: 'en',
+        maxAttempts: 1,
+        fetchImpl: fetchStub(async () => { throw networkError; }),
+    });
+    await assert.rejects(client.fetchXml(FEED), (error: unknown) => (
+        error instanceof FeedFetchError
+        && error.kind === 'network'
+        && /ENOTFOUND news\.google\.com/.test(error.message)
+    ));
+});
+
 function textResponse(body: string, status = 200, headers: Record<string, string> = {}): Response {
     return new Response(body, { status, headers: { 'content-type': 'application/rss+xml', ...headers } });
 }
